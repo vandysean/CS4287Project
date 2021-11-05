@@ -24,7 +24,7 @@ def get_application() -> FastAPI:
 
     application.include_router(router, prefix="")
     
-    application.mount("/static", StaticFiles(directory="stream2fa/static"), name="static")
+    application.mount("/static", StaticFiles(directory="static"), name="static")
 
     return application
 
