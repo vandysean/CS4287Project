@@ -1,0 +1,9 @@
+#!/bin/sh
+
+sudo cat $TOKEN_PATH | docker login -u tuttlsj1 --password-stdin
+docker pull tuttlsj1/cs4287:stream2fa
+docker logout
+
+docker rm -f test-stream2fa 2> /dev/null
+
+docker run -d -p 8000:8000 --name test-stream2fa tuttlsj1/cs4287:stream2fa
