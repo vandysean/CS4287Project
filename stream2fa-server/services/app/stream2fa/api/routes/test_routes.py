@@ -9,8 +9,7 @@ router = APIRouter()
 async def stream(stream_frame: StreamFrame):
     img = await decode_base64_image(stream_frame.uri)
     return {"status": "Processed", "shape": f"{img.shape}", "type": f"{type(img)}", 
-            "user": stream_frame.username, "pass": stream_frame.password,
-            "app": stream_frame.app}
+            "user": stream_frame.username, "app": stream_frame.app}
 
 
 @router.get("/get")
