@@ -6,7 +6,7 @@ from starlette.status import HTTP_422_UNPROCESSABLE_ENTITY
 from typing import Union
 
 
-async def http422_error_handler(request: Request,
+async def validation_error_handler(request: Request,
                 exc: Union[RequestValidationError, ValidationError]) -> JSONResponse:
     
     return JSONResponse(
