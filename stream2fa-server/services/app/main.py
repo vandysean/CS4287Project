@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.responses import ORJSONResponse
 from fastapi.exceptions import RequestValidationError
 from fastapi.staticfiles import StaticFiles
 from starlette.exceptions import HTTPException
@@ -9,7 +10,7 @@ from stream2fa.api.errors.validation_error import validation_error_handler
 from stream2fa.api.router import router
 
 def get_application() -> FastAPI:
-    application = FastAPI(debug=True, title="stream2fa", version="0.0.1")
+    application = FastAPI(debug=True, title="stream2fa", version="0.0.1", default_response_class=ORJSONResponse)
 
     application.add_middleware(
         CORSMiddleware,
