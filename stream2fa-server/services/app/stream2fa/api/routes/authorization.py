@@ -4,6 +4,7 @@ from cryptography.fernet import Fernet
 
 from stream2fa.common.functions import decode_base64_image
 from stream2fa.common.objects import templates
+from stream2fa.common.constants import CIPHER_KEY
 from stream2fa.api.models import StreamFrame, UserInfo, StreamTemplateInfo
 
 import os
@@ -14,7 +15,7 @@ async def _compare_passwords(*, username: str, hashed_password: str, app: str) -
     stored_hashed_password_bytes = '123pass'.encode('utf-8') # would fetch from database
     hashed_password_bytes = hashed_password.encode('utf-8')
     
-    cipher = Fernet(os.environ.get('CIPHER_KEY').encode("utf-8"))
+    cipher = Fernet(CIPHER_KEY.encode("utf-8"))
     return cipher.decrypt(stored_hashed_password_bytes) == cipher.decrypt(hashed_password_bytes)
 
 @router.post("/user/pwd")
@@ -25,7 +26,7 @@ async def stream(user_info: UserInfo):
         is_password_authorized = await _compare_passwords(username=username, hashed_password=password, app=app)
         status = 'success' if is_password_authorized else 'failure'
     except Exception as e:
-        status = f'error => {repr(e)}'
+        status = f'error => {repr(e)} - un={username}, pw={password}, app={app}'
     
     return {'status': status}
     
