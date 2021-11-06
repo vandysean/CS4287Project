@@ -45,5 +45,13 @@ async def stream(stream_frame: StreamFrame):
 
 
 @router.post("/user/stream/template", response_class=HTMLResponse)
-async def stream_template(request: Request):
-    return templates.TemplateResponse('auth_stream_template.html', {"request": request})
+async def stream_template(request: Request, stream_template_info: StreamTemplateInfo):
+    template_data = {
+        'request': request,
+        'username': stream_template_info.username,
+        'app': stream_template_info.app,
+        'success_url': stream_template_info.success_url,
+        'failure_url': stream_template_info.failure_url
+    }
+    
+    return templates.TemplateResponse('auth_stream_template.html', template_data)
