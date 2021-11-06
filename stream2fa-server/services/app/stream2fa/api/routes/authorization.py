@@ -3,7 +3,6 @@ from fastapi.responses import HTMLResponse
 
 from stream2fa.common.functions import decode_base64_image
 from stream2fa.common.objects import templates
-from stream2fa.common.constants import CIPHER_KEY
 from stream2fa.api.models import StreamFrame, UserInfo, StreamTemplateInfo
 
 
@@ -31,13 +30,12 @@ async def stream(user_info: UserInfo):
 async def stream(stream_frame: StreamFrame):
     try:
         img = await decode_base64_image(stream_frame.uri)
-        status = 'success/failure'
     except Exception as e:
-        status = f'error => {repr(e)}'
+        return {'status': f'error => {repr(e)}'}
     
     ## Do thing with the image here ##
     
-    return {'status': status}
+    return {'status': 'success/failure'}
 
 
 @router.post("/user/stream/template", response_class=HTMLResponse)

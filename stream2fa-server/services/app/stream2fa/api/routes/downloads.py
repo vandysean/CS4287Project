@@ -5,9 +5,12 @@ import os
 
 router = APIRouter()
 
-@router.get('/', response_class=FileResponse)
+@router.get('/{file_name}', response_class=FileResponse)
 def download(file_name: str):
-    file_type = 'js' if file_name.split('.')[1] == 'js' else 'css'
+    file_type = file_name.split('.')[1]
     
-    return os.path.join(os.getcwd(), 'stream2fa', 'static', file_type, file_name)
+    if file_type == 'js' or file_type == 'css':
+        return os.path.join(os.getcwd(), 'stream2fa', 'static', file_type, file_name)
+    else:
+        return os.path.join(os.getcwd(), 'stream2fa', 'static', 'misc', file_name)
         

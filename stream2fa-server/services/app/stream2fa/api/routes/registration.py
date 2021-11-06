@@ -1,7 +1,9 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Request
+from fastapi.responses import HTMLResponse
 
 from stream2fa.common.functions import decode_base64_image
-from stream2fa.api.models import StreamFrame, AppInfo, UserInfo
+from stream2fa.common.objects import templates
+from stream2fa.api.models import StreamFrame, AppInfo, UserInfo, StreamTemplateInfo
 
 router = APIRouter()
 
@@ -40,3 +42,15 @@ async def stream(stream_frame: StreamFrame):
     ## Do thing with the image here ##
     
     return {'status': status}
+
+@router.post("/user/stream/template", response_class=HTMLResponse)
+async def stream_template(request: Request, stream_template_info: StreamTemplateInfo):
+    template_data = {
+        'request': request,
+        'username': stream_template_info.username,
+        'app': stream_template_info.app,
+        'success_url': stream_template_info.success_url,
+        'failure_url': stream_template_info.failure_url
+    }
+    
+    return templates.TemplateResponse('reg_stream_template.html', template_data)
