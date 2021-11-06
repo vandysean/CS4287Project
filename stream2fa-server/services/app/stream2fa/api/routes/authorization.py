@@ -35,7 +35,7 @@ async def stream(stream_frame: StreamFrame):
     
     ## Do thing with the image here ##
     
-    return {'status': 'success/failure'}
+    return {'status': 'ongoing/success'}
 
 
 @router.post("/user/stream/template", response_class=HTMLResponse)

@@ -1,34 +1,72 @@
 // constants
-const URL = 'http://35.153.43.136:8000/auth/user/stream'
-const USERNAME = document.getElementById("username").value
-const APP = document.getElementById("app").value
-const RATE = 10
-const STREAM_TIME = 15 * 1000 // 10 seconds
+const URL = 'http://35.153.43.136:8000/auth/user/stream';
+const USERNAME = document.getElementById("username").value;
+const APP = document.getElementById("app").value;
+const RATE = 10;
+const SECONDS = 1000;
+const ALLOWED_TIME = 15;
 
-// The buttons to start & stop stream and to capture the image
-var btnStart = document.getElementById( "btn-start" );
-var btnStop = document.getElementById( "btn-stop" );
-
-// The stream & capture
+// stream elements
 var stream = document.getElementById( "stream" );
 var capture = document.getElementById( "capture" );
-capture.width = stream.width
-capture.height = stream.height
-// The video stream
 var cameraStream = null;
+capture.width = stream.width / 3;
+capture.height = stream.height / 3;
 
-var SHOULD_STREAM = true
+// instructions and progress bar
+var instructions = document.getElementById('instructions');
+var progressBar = document.getElementById('progress-bar')
+const PROGRESS_BAR_MAX_WIDTH = document.getElementById('progress-bar-container').width;
 
-// Attach listeners
-btnStart.addEventListener( "click", startStreaming );
-btnStop.addEventListener( "click", stopStreaming );
+var isAuthenticated = false;
+var timeoutOccurred = false;
 
-async function sendFrameToServer(num, uri) {
+async function updateProgressBar() {
+	const maxTimeElapsed = ALLOWED_TIME * SECONDS;
+	const startTime = Date.now();
+
+	while (Date.now() - startTime <= maxTimeElapsed) {
+		let percentWidth = 100 * ((Date.now() - startTime) / maxTimeElapsed);
+		if (percentWidth > 100) {
+			percentWidth = 100;
+		}
+
+		progressBar.style.width = Math.round(percentWidth) + "%";
+	}
+}
+
+async function handleSuccess() {
+	if (!timeoutOccurred) {
+		isAuthenticated = true;
+		instructions.style.color = "#4bb543";
+		instructions.innerHTML = "Successfully authenticated " + USERNAME + "!";
+
+		setTimeout(() => {
+			const successLink = document.getElementById("success-url");
+			successLink.click()
+		}, 2 * SECONDS)
+	}
+}
+
+async function handleFailure() {
+	if (!isAuthenticated) {
+		timeoutOccurred = true;
+		instructions.style.color = "#fc100d";
+		instructions.innerHTML = "Authentication unsuccessful";
+
+		setTimeout(() => {
+			const failureLink = document.getElementById("failure-url");
+			failureLink.click()
+		}, 2 * SECONDS)
+	}
+}
+
+async function sendFrameToServer() {
 	body = {
-		uri: uri,
+		uri: capture.toDataURL( "image/png" ),
 		username: USERNAME,
 		app: APP
-	}
+	};
 
 	try {
 		const response = await fetch(URL, {
@@ -45,44 +83,26 @@ async function sendFrameToServer(num, uri) {
 			body: JSON.stringify(body)
 		});
 		
-		const responseText = await response.text();
+		const responseJson = await response.json();
+		const responseStatus = responseJson['status'];
 
-		console.log(num + ": " + responseText)
-	} catch(err) {
-		console.log(err)
-	}
-}
-
-// 12.35 frames/sec on firefox
-// 11.2 frames/sec on edge
-// 1.55? frames/sec on chrome
-// 13.15 on opera
-async function streamToServer() {
-	for(let i = 1; SHOULD_STREAM && cameraStream != null; ++i) {
-		if(i % RATE === 0) {
-			await sendFrameToServer(i)
-		}
+		return responseStatus
+	} catch (err) {
+		console.log(err);
+		return 'ongoing'
 	}
 }
 
 async function doStream() {
-	for(let i = 1; SHOULD_STREAM && cameraStream != null; ++i) {
-		// var ctx = capture.getContext( '2d' );
-		// var img = new Image();
+	for (let i = 1; cameraStream != null; ++i) {
+		if (i % RATE === 0) {
+			const responseStatus = await sendFrameToServer();
 
-		// ctx.drawImage( stream, 0, 0, capture.width, capture.height );
-	
-		uri = capture.toDataURL( "image/png" );
-
-		// img.src		= uri;
-		// img.width	= 320;
-        // img.height  = 240;
-
-		// snapshot.innerHTML = '';
-
-		// snapshot.appendChild( img );
-		if(i % RATE === 0) {
-			await sendFrameToServer(i, uri)
+			if (responseStatus === 'success') {
+				await handleSuccess()
+			} else if (responseStatus !== 'ongoing') {
+				console.log('ERROR: ' + responseStatus)
+			}
 		}
 	}
 }
@@ -92,69 +112,66 @@ function startStreaming() {
 
 	var mediaSupport = 'mediaDevices' in navigator;
 
-	if( mediaSupport && null === cameraStream ) {
+	if (mediaSupport && null === cameraStream) {
 
-		navigator.mediaDevices.getUserMedia( { video: true } )
-		.then( function( mediaStream ) {
-			SHOULD_STREAM = true
-
+		navigator.mediaDevices.getUserMedia({ video: true })
+		.then(function(mediaStream){
 			cameraStream = mediaStream;
 
 			stream.srcObject = mediaStream;
 
 			stream.play();
 
-			doStream()
-
-			// streamToServer();
-
-			// setTimeout(() => { SHOULD_STREAM = false; }, STREAM_TIME);
+			// doStream()
 		})
-		.catch( function( err ) {
+		.catch(function(err) {
 
-			console.log( "Unable to access camera: " + err );
+			console.log("Unable to access camera: " + err);
 		});
-	} else if(cameraStream !== null) {
+	} else if (cameraStream !== null) {
 		console.log("")
 	} else {
-
-		alert( 'Your browser does not support media devices.' );
-
+		alert('Your browser does not support media devices.');
 		return;
 	}
 }
 
+startStreaming()
+
+instructions.innerHTML = "Please look into the camera"
+
+setTimeout(() => {
+	instructions.innerHTML = "Stream starting in 3";
+
+	setTimeout(() => {
+		instructions.innerHTML += ", 2";
+
+		setTimeout(() => {
+			instructions.innerHTML += ", 1...";
+
+			setTimeout(() => {
+				instructions.innerHTML = "Authentication in progress...";
+
+				updateProgressBar();
+
+				setTimeout(handleFailure, ALLOWED_TIME * SECONDS);
+			}, 1 * SECONDS);
+
+		}, 1 * SECONDS);
+
+	}, 1 * SECONDS);
+
+}, 2 * SECONDS)
+
 // Stop Streaming
-function stopStreaming() {
+// function stopStreaming() {
 
-	if( null != cameraStream ) {
+// 	if (null != cameraStream) {
+// 		var track = cameraStream.getTracks()[ 0 ];
 
-		var track = cameraStream.getTracks()[ 0 ];
+// 		track.stop();
+// 		stream.load();
 
-		track.stop();
-		stream.load();
-
-		cameraStream = null;
-	}
-}
-
-function captureSnapshot() {
-
-	if( null != cameraStream ) {
-
-		var ctx = capture.getContext( '2d' );
-		var img = new Image();
-
-		ctx.drawImage( stream, 0, 0, capture.width, capture.height );
-	
-		data = capture.toDataURL( "image/png" );
-
-		img.src		= data;
-		img.width	= 320;
-        img.height  = 240;
-
-		snapshot.innerHTML = '';
-
-		snapshot.appendChild( img );
-	}
-}
+// 		cameraStream = null;
+// 	}
+// }
