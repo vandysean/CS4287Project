@@ -3,8 +3,6 @@ from fastapi import APIRouter
 from stream2fa.common.functions import decode_base64_image
 from stream2fa.api.models import TestMessage, StreamFrame
 
-import traceback
-
 router = APIRouter()
 
 @router.post("/stream")
@@ -12,7 +10,7 @@ async def stream(stream_frame: StreamFrame):
     try:
         img = await decode_base64_image(stream_frame.uri)
     except Exception as e:
-        return {'status': 'failed', 'message': f'{traceback.format_exception(e)}'}
+        return {'status': 'failed', 'message': f'{repr(e)}'}
     
     return {"status": "Processed", "shape": f"{img.shape}", "type": f"{type(img)}", 
             "user": stream_frame.username, "app": stream_frame.app}

@@ -6,7 +6,6 @@ from stream2fa.common.functions import decode_base64_image
 from stream2fa.common.objects import templates
 from stream2fa.api.models import StreamFrame, UserInfo, StreamTemplateInfo
 
-import traceback
 import os
 
 router = APIRouter()
@@ -26,7 +25,7 @@ async def stream(user_info: UserInfo):
         is_password_authorized = await _compare_passwords(username=username, hashed_password=password, app=app)
         status = 'success' if is_password_authorized else 'failure'
     except Exception as e:
-        status = f'error => {traceback.format_exception(e)}'
+        status = f'error => {repr(e)}'
     
     return {'status': status}
     
@@ -37,7 +36,7 @@ async def stream(stream_frame: StreamFrame):
         img = await decode_base64_image(stream_frame.uri)
         status = 'success/failure'
     except Exception as e:
-        status = f'error => {traceback.format_exception(e)}'
+        status = f'error => {repr(e)}'
     
     ## Do thing with the image here ##
     
