@@ -4,7 +4,7 @@ from cryptography.fernet import Fernet
 
 from stream2fa.common.functions import decode_base64_image
 from stream2fa.common.objects import templates
-from stream2fa.api.models import StreamFrame, UserInfo, StreamTemplateInfo
+from stream2fa.api.models import StreamFrame, UserInfo#, StreamTemplateInfo
 
 import traceback
 import os
