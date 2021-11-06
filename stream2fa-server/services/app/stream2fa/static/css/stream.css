@@ -13,11 +13,10 @@ div.instructions-box {
 
 div.video-box {
     display: block;
-    border: 1px solid black;
     margin-left: auto;
     margin-right: auto;
-    width: 60%;
-    height: 60%;
+    width: 500px;
+    height: 375px;
     padding: 10px;
 }
 
