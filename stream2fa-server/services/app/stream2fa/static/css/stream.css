@@ -6,12 +6,12 @@ html, body {
 div.instructions-box {
     height: fit-content;
     text-align: center;
-    width: 60%;
+    width: 600px;
     margin-left: auto;
     margin-right: auto;
 }
 
-#instructions {
+.instructions {
     margin-bottom: 8px;
 }
 
@@ -35,12 +35,12 @@ div.progress-bar-container {
 }
 
 div.progress-bar {
+    text-align: center;
     background-color: #42f572;
     position: absolute;
     left: 0px;
     top: 0px;
     bottom: 0px;
-    width: 0%
 }
 
 #stream {
