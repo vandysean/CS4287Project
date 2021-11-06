@@ -1,14 +1,14 @@
 from fastapi import APIRouter
 
 from stream2fa.common.functions import decode_base64_image
-from stream2fa.api.models import StreamFrame, UserAuthInit
+from stream2fa.api.models import StreamFrame, UserInfo
 
 import traceback
 
 router = APIRouter()
 
 @router.post("/user/init")
-async def stream(user_info: UserAuthInit):
+async def stream(user_info: UserInfo):
     username, password, app = user_info.username, user_info.password, user_info.app
     
     ## Dehash password, see if it belongs to $username within $app ##

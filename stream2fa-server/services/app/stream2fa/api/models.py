@@ -9,15 +9,10 @@ class StreamFrame(BaseModel):
     username: str
     app: str
     
-class AppReg(BaseModel):
+class AppInfo(BaseModel):
     app: str
     
-class UserRegInit(BaseModel):
-    username: str
-    password: str
-    app: str
-    
-class UserAuthInit(BaseModel):
+class UserInfo(BaseModel):
     username: str
     password: str
     app: str

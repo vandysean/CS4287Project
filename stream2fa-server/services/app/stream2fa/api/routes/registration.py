@@ -1,15 +1,15 @@
 from fastapi import APIRouter
 
 from stream2fa.common.functions import decode_base64_image
-from stream2fa.api.models import StreamFrame, AppReg, UserRegInit
+from stream2fa.api.models import StreamFrame, AppInfo, UserInfo
 
 import traceback
 
 router = APIRouter()
 
 @router.post("/app")
-async def stream(app_info: AppReg):
-    app = AppReg.app
+async def stream(app_info: AppInfo):
+    app = app_info.app
     
     ## Check if app with this name exists in db already, if not create one in db ##
     try:
@@ -20,7 +20,7 @@ async def stream(app_info: AppReg):
     return {'status': status}
 
 @router.post("/user/init")
-async def stream(user_info: UserRegInit):
+async def stream(user_info: UserInfo):
     username, password, app = user_info.username, user_info.password, user_info.app
     
     ## Check if username is available, if so create new user in db ##
