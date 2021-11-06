@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,14 +6,24 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{app}} - stream2fa</title>
-    <link rel="stylesheet" href="http://35.153.43.136:8000/download/main.css">
+    <link rel="icon" href="http://35.153.43.136:8000/download/stream2fa-icon.png" type="image/x-icon">
+    <!-- <link rel="stylesheet" href=""> -->
 </head>
-<body>
-    <p>Authorization stream template</p>
-    <p>Username: {{username}}</p>
-    <br>
-    <a href="{{success_url}}" target="_blank">Success Url</a>
-    <br>
-    <a href="{{failure_url}}" target="_blank">Failure Url</a>
+<body>      
+    <!-- Video Element & Canvas -->
+    <div class="container">
+        <div class="instructions-box">
+            <h2 class="instructions">These are the instructions</h2>
+        </div>
+        <div class="video-box">
+            <video id="stream"></video>
+            <canvas id="capture"></canvas>
+        </div>
+    </div>
+
+    <!-- <input id="stream-url" type="hidden" value="http://35.153.43.136:8000/auth/user/stream"/> -->
+    <input id="username" type="hidden" value="{{username}}"/>
+    <input id="app" type="hidden" value="{{app}}"/>
+    <script src="http://35.153.43.136:8000/download/auth-stream.js"></script>
 </body>
 </html>
