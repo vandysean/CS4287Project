@@ -19,7 +19,7 @@ async def stream(app_info: AppInfo):
     
     return {'status': status}
 
-@router.post("/user/init")
+@router.post("/user/pwd")
 async def stream(user_info: UserInfo):
     username, password, app = user_info.username, user_info.password, user_info.app
     
