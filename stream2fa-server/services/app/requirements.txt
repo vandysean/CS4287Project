@@ -1,3 +1,4 @@
 wheel
 fastapi[all]
 opencv-python-headless
+python-dotenv
