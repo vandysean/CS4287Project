@@ -35,7 +35,6 @@ div.progress-bar-container {
 }
 
 div.progress-bar {
-    text-align: center;
     background-color: #42f572;
     position: absolute;
     left: 0px;

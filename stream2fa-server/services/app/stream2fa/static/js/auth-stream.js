@@ -121,8 +121,6 @@ function startStreaming() {
 			stream.srcObject = mediaStream;
 
 			stream.play();
-
-			// doStream()
 		})
 		.catch(function(err) {
 
@@ -138,7 +136,7 @@ function startStreaming() {
 
 startStreaming()
 
-instructions.innerHTML = "Please look into the camera"
+while (cameraStream === null) {}
 
 setTimeout(() => {
 	instructions.innerHTML = "Stream starting in 3";
@@ -152,9 +150,10 @@ setTimeout(() => {
 			setTimeout(() => {
 				instructions.innerHTML = "Authentication in progress...";
 
+				doStream();
 				updateProgressBar();
-
 				setTimeout(handleFailure, ALLOWED_TIME * SECONDS);
+
 			}, 1 * SECONDS);
 
 		}, 1 * SECONDS);
