@@ -52,6 +52,8 @@ async function handleFailure() {
 		instructions.style.color = "#fc100d";
 		instructions.innerHTML = "Authentication unsuccessful";
 
+		progressBar.style.backgroundColor = "#fc100d";
+
 		setTimeout(() => {
 			const failureLink = document.getElementById("failure-url");
 			failureLink.click()
