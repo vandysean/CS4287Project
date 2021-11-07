@@ -93,7 +93,7 @@ async function sendFrameToServer() {
 	}
 }
 
-async function doStream() {
+async function kickoffStream() {
 	for (let i = 1; cameraStream != null; ++i) {
 		if (i % RATE === 0) {
 			const responseStatus = await sendFrameToServer();
@@ -107,8 +107,34 @@ async function doStream() {
 	}
 }
 
+async function kickoffBackgroundProcesses() {
+	setTimeout(() => {
+		instructions.innerHTML = "Stream starting in 3";
+
+		setTimeout(() => {
+			instructions.innerHTML += ", 2";
+
+			setTimeout(() => {
+				instructions.innerHTML += ", 1...";
+
+				setTimeout(() => {
+					instructions.innerHTML = "Authentication in progress...";
+
+					kickoffStream();
+					updateProgressBar();
+					setTimeout(handleFailure, ALLOWED_TIME * SECONDS);
+
+				}, 1 * SECONDS);
+
+			}, 1 * SECONDS);
+
+		}, 1 * SECONDS);
+
+	}, 2 * SECONDS)
+}
+
 // Start Streaming
-function startStreaming() {
+async function startStreaming() {
 
 	var mediaSupport = 'mediaDevices' in navigator;
 
@@ -121,6 +147,8 @@ function startStreaming() {
 			stream.srcObject = mediaStream;
 
 			stream.play();
+
+			kickoffBackgroundProcesses()
 		})
 		.catch(function(err) {
 
@@ -134,33 +162,4 @@ function startStreaming() {
 	}
 }
 
-async function kickoffBackgroundProcesses() {
-	while (cameraStream === null) {}
-
-	setTimeout(() => {
-		instructions.innerHTML = "Stream starting in 3";
-
-		setTimeout(() => {
-			instructions.innerHTML += ", 2";
-
-			setTimeout(() => {
-				instructions.innerHTML += ", 1...";
-
-				setTimeout(() => {
-					instructions.innerHTML = "Authentication in progress...";
-
-					doStream();
-					updateProgressBar();
-					setTimeout(handleFailure, ALLOWED_TIME * SECONDS);
-
-				}, 1 * SECONDS);
-
-			}, 1 * SECONDS);
-
-		}, 1 * SECONDS);
-
-	}, 2 * SECONDS)
-}
-
 startStreaming()
-kickoffBackgroundProcesses()
