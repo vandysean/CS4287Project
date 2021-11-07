@@ -29,7 +29,7 @@ async function updateProgressBar(timeElapsed) {
 		percentWidth = 100;
 	}
 
-	progressBar.style.width = Math.round(percentWidth) + "%";
+	progressBar.style.width = percentWidth + "%";
 }
 
 async function handleSuccess() {
@@ -59,13 +59,13 @@ async function handleFailure() {
 	}
 }
 
-async function sendFrameToServer() {
+async function sendFrameToServer(uri) {
 	const body = {
-		uri: capture.toDataURL('image/png'),
+		uri: uri,
 		username: USERNAME,
 		app: APP
 	};
-	console.log(body['uri']);
+
 	try {
 		const response = await fetch(URL, {
 			method: 'POST',
@@ -103,8 +103,9 @@ async function kickoffStream() {
 		if (i % RATE === 0) {
 			const ctx = capture.getContext('2d');
 			ctx.drawImage(stream, 0, 0, capture.width, capture.height);
-
-			const responseStatus = await sendFrameToServer();
+			const uri = capture.toDataURL('image/png');
+			console.log(uri);
+			const responseStatus = await sendFrameToServer(uri);
 
 			if (responseStatus === 'success') {
 				await handleSuccess()
