@@ -7,8 +7,7 @@
     <title>stream2fa - Immediate Redirect</title>
 </head>
 <body>
-    <p>Redirecting to: {{url}}</p>
-    <a id="redirect-url" href="{{url}}" style="display: none;">Redirect Url</a>
+    <p>Redirecting to: <a id="redirect-url" href="{{url}}">{{url}}</a></p>
     <script>
         const a = document.getElementById("redirect-url");
         a.click()

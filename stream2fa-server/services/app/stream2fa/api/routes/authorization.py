@@ -30,12 +30,13 @@ async def stream(user_info: UserInfo):
 async def stream(stream_frame: StreamFrame):
     try:
         img = await decode_base64_image(stream_frame.uri)
+        status = 'ongoing' # ongoing / success
     except Exception as e:
-        return {'status': f'error => {repr(e)}'}
+        status = f'error => {repr(e)}'
     
     ## Do thing with the image here ##
     
-    return {'status': 'ongoing/success'}
+    return {'status': status}
 
 
 @router.post("/user/stream/template", response_class=HTMLResponse)
@@ -45,7 +46,8 @@ async def stream_template(request: Request, stream_template_info: StreamTemplate
         'username': stream_template_info.username,
         'app': stream_template_info.app,
         'success_url': stream_template_info.success_url,
-        'failure_url': stream_template_info.failure_url
+        'failure_url': stream_template_info.failure_url,
+        'js_file': 'auth-stream.js'
     }
     
-    return templates.TemplateResponse('auth_stream_template.html', template_data)
+    return templates.TemplateResponse('stream_template.html', template_data)

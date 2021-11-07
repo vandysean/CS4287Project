@@ -12,7 +12,7 @@
 <body>      
     <div class="container">
         <div class="instructions-box">
-            <h2 id="instructions" class="instructions" style="color: black;"></h2>
+            <h2 id="instructions" class="instructions"></h2>
         </div>
         <div class="video-box">
             <video id="stream" width="540" height="405"></video>
@@ -36,6 +36,6 @@
     <input id="app" type="hidden" value="{{app}}"/>
     <a id="success-url" type="hidden" href="{{success_url}}"></a>
     <a id="failure-url" type="hidden" href="{{failure_url}}"></a>
-    <script src="http://35.153.43.136:8000/download/auth-stream.js"></script>
+    <script src="http://35.153.43.136:8000/download/{{js_file}}"></script>
 </body>
 </html>

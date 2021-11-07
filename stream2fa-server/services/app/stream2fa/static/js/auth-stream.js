@@ -11,6 +11,7 @@ var stream = document.getElementById("stream");
 var capture = document.getElementById("capture");
 var ctx = capture.getContext('2d');
 var cameraStream = null;
+
 capture.width = stream.width;
 capture.height = stream.height;
 
@@ -84,9 +85,8 @@ async function sendFrameToServer(uri) {
 		});
 		
 		const responseJson = await response.json();
-		const responseStatus = responseJson['status'];
 
-		return responseStatus
+		return responseJson['status'];
 	} catch (err) {
 		console.log(err);
 		return 'ongoing'
@@ -103,7 +103,8 @@ async function kickoffStream() {
 		}
 
 		if (i % RATE === 0) {
-			ctx.drawImage(stream, 0, 0, capture.width, capture.height);			const uri = capture.toDataURL('image/png');
+			ctx.drawImage(stream, 0, 0, capture.width, capture.height);
+			const uri = capture.toDataURL('image/png');
 
 			const responseStatus = await sendFrameToServer(uri);
 
@@ -137,14 +138,14 @@ async function startStreaming() {
 			kickoffStream();
 		})
 		.catch(function(err) {
-
 			console.log("Unable to access camera: " + err);
 		});
-	} else if (cameraStream !== null) {
-		console.log("")
-	} else {
-		alert('Your browser does not support media devices.');
-		return;
+	} else if (!mediaSupport) {
+		instructions.innerHTML = 'Your browser does not support media devices';
+		setTimeout(() => {
+			const failureLink = document.getElementById("failure-url");
+			failureLink.click()
+		}, 2 * SECONDS)
 	}
 }
 

@@ -1,34 +1,89 @@
 // constants
-const URL = 'http://35.153.43.136:8000/register/user/stream'
-const USERNAME = document.getElementById("username").value
-const APP = document.getElementById("app").value
-const RATE = 1
-const STREAM_TIME = 20 * 1000 // 10 seconds
+const URL = 'http://35.153.43.136:8000/register/user/stream';
+const USERNAME = document.getElementById("username").value;
+const APP = document.getElementById("app").value;
+const RATE = 10;
+const SECONDS = 1000;
+const ALLOWED_TIME = 15;
 
-// The buttons to start & stop stream and to capture the image
-var btnStart = document.getElementById( "btn-start" );
-var btnStop = document.getElementById( "btn-stop" );
-
-// The stream & capture
-var stream = document.getElementById( "stream" );
-var capture = document.getElementById( "capture" );
-capture.width = stream.width
-capture.height = stream.height
-// The video stream
+// stream elements
+var stream = document.getElementById("stream");
+var capture = document.getElementById("capture");
+var ctx = capture.getContext('2d');
 var cameraStream = null;
 
-var SHOULD_STREAM = true
+capture.width = stream.width;
+capture.height = stream.height;
 
-// Attach listeners
-btnStart.addEventListener( "click", startStreaming );
-btnStop.addEventListener( "click", stopStreaming );
+// instructions and progress bar
+var instructions = document.getElementById('instructions');
+var progressBar = document.getElementById('progress-bar');
 
-async function sendFrameToServer(num, uri) {
-	body = {
+var maxNumEncodingsSaved = -1;
+
+var isRegistered = false;
+var registrationFailed = false;
+var timeoutOccurred = false;
+
+async function updateProgressBar(numEncodingsSaved) {	
+	let percentWidth = Math.round(100 * (numEncodingsSaved / maxNumEncodingsSaved))
+	if (percentWidth > 100) {
+		percentWidth = 100;
+	}
+
+	progressBar.style.width = percentWidth + "%";
+}
+
+async function handleSuccess() {
+	if (!timeoutOccurred && !registrationFailed) {
+		isRegistered = true;
+		instructions.style.color = "#4bb543";
+		instructions.innerHTML = "Successfully registered " + USERNAME + "!";
+		progressBar.style.backgroundColor = "#4bb543";
+
+		setTimeout(() => {
+			const successLink = document.getElementById("success-url");
+			successLink.click()
+		}, 1 * SECONDS)
+	}
+}
+
+async function handleFailure() {
+	if (!isRegistered && !timeoutOccurred) {
+		registrationFailed = true;
+		instructions.style.color = "#fc100d";
+		instructions.innerHTML = "Registration unsuccessful";
+
+		progressBar.style.backgroundColor = "#fc100d";
+
+		setTimeout(() => {
+			const failureLink = document.getElementById("failure-url");
+			failureLink.click()
+		}, 1 * SECONDS)
+	}
+}
+
+async function handleTimeout() {
+	if (!isRegistered && !registrationFailed) {
+		timeoutOccurred = true;
+		instructions.style.color = "#fc100d";
+		instructions.innerHTML = "Registration timed out";
+
+		progressBar.style.backgroundColor = "#fc100d";
+
+		setTimeout(() => {
+			const failureLink = document.getElementById("failure-url");
+			failureLink.click()
+		}, 1 * SECONDS)
+	}
+}
+
+async function sendFrameToServer(uri) {
+	const body = {
 		uri: uri,
 		username: USERNAME,
 		app: APP
-	}
+	};
 
 	try {
 		const response = await fetch(URL, {
@@ -45,116 +100,77 @@ async function sendFrameToServer(num, uri) {
 			body: JSON.stringify(body)
 		});
 		
-		const responseText = await response.text();
+		const responseJson = await response.json();
 
-		console.log(num + ": " + responseText)
-	} catch(err) {
-		console.log(err)
+		return responseJson;
+	} catch (err) {
+		console.log(err);
+		return 'ongoing'
 	}
 }
 
-// 12.35 frames/sec on firefox
-// 11.2 frames/sec on edge
-// 1.55? frames/sec on chrome
-// 13.15 on opera
-async function streamToServer() {
-	for(let i = 1; SHOULD_STREAM && cameraStream != null; ++i) {
-		if(i % RATE === 0) {
-			await sendFrameToServer(i)
+async function kickoffStream() {
+	const startTime = Date.now();
+	const endTime = startTime + ALLOWED_TIME * SECONDS
+
+	for (let i = 1; cameraStream != null; ++i) {
+		if (Date.now() > endTime) {
+			await handleTimeout()
 		}
-	}
-}
 
-async function doStream() {
-	for(let i = 1; SHOULD_STREAM && cameraStream != null; ++i) {
-		// var ctx = capture.getContext( '2d' );
-		// var img = new Image();
+		if (i % RATE === 0) {
+			ctx.drawImage(stream, 0, 0, capture.width, capture.height);
+			const uri = capture.toDataURL('image/png');
 
-		// ctx.drawImage( stream, 0, 0, capture.width, capture.height );
-	
-		uri = capture.toDataURL( "image/png" );
+			const responseJson = await sendFrameToServer(uri);
 
-		// img.src		= uri;
-		// img.width	= 320;
-        // img.height  = 240;
+			const responseStatus = responseJson['status'];
+			const numEncodingsSaved = responseJson['encodings_saved'];
+			if (maxNumEncodingsSaved < 0) {
+				maxNumEncodingsSaved = responseJson['max_encodings_saved'];
+			}
 
-		// snapshot.innerHTML = '';
+			await updateProgressBar(numEncodingsSaved);
 
-		// snapshot.appendChild( img );
-		if(i % RATE === 0) {
-			await sendFrameToServer(i, uri)
+			if (responseStatus === 'complete') {
+				await handleSuccess();
+			} else if (responseStatus === 'failed') {
+				await handleFailure();
+			} else if (responseStatus !== 'ongoing') {
+				console.log('ERROR: ' + responseStatus);
+			}
 		}
 	}
 }
 
 // Start Streaming
-function startStreaming() {
+async function startStreaming() {
 
 	var mediaSupport = 'mediaDevices' in navigator;
 
-	if( mediaSupport && null === cameraStream ) {
+	if (mediaSupport && null === cameraStream) {
 
-		navigator.mediaDevices.getUserMedia( { video: true } )
-		.then( function( mediaStream ) {
-			SHOULD_STREAM = true
-
+		navigator.mediaDevices.getUserMedia({ video: true })
+		.then(function(mediaStream){
 			cameraStream = mediaStream;
 
 			stream.srcObject = mediaStream;
 
 			stream.play();
 
-			doStream()
-
-			// streamToServer();
-
-			// setTimeout(() => { SHOULD_STREAM = false; }, STREAM_TIME);
+			instructions.innerHTML = "Registration in progress...";
+			kickoffStream();
 		})
-		.catch( function( err ) {
-
-			console.log( "Unable to access camera: " + err );
+		.catch(function(err) {
+			console.log("Unable to access camera: " + err);
 		});
-	} else if(cameraStream !== null) {
-		console.log("")
-	} else {
-
-		alert( 'Your browser does not support media devices.' );
-
-		return;
+	} else if (!mediaSupport) {
+		instructions.innerHTML = 'Your browser does not support media devices';
+		setTimeout(() => {
+			const failureLink = document.getElementById("failure-url");
+			failureLink.click()
+		}, 2 * SECONDS)
 	}
 }
 
-// Stop Streaming
-function stopStreaming() {
-
-	if( null != cameraStream ) {
-
-		var track = cameraStream.getTracks()[ 0 ];
-
-		track.stop();
-		stream.load();
-
-		cameraStream = null;
-	}
-}
-
-function captureSnapshot() {
-
-	if( null != cameraStream ) {
-
-		var ctx = capture.getContext( '2d' );
-		var img = new Image();
-
-		ctx.drawImage( stream, 0, 0, capture.width, capture.height );
-	
-		data = capture.toDataURL( "image/png" );
-
-		img.src		= data;
-		img.width	= 320;
-        img.height  = 240;
-
-		snapshot.innerHTML = '';
-
-		snapshot.appendChild( img );
-	}
-}
+startStreaming();
