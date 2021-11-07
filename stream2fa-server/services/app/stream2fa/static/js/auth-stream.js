@@ -134,43 +134,33 @@ function startStreaming() {
 	}
 }
 
-startStreaming()
-
-while (cameraStream === null) {}
-
-setTimeout(() => {
-	instructions.innerHTML = "Stream starting in 3";
+async function kickoffBackgroundProcesses() {
+	while (cameraStream === null) {}
 
 	setTimeout(() => {
-		instructions.innerHTML += ", 2";
+		instructions.innerHTML = "Stream starting in 3";
 
 		setTimeout(() => {
-			instructions.innerHTML += ", 1...";
+			instructions.innerHTML += ", 2";
 
 			setTimeout(() => {
-				instructions.innerHTML = "Authentication in progress...";
+				instructions.innerHTML += ", 1...";
 
-				doStream();
-				updateProgressBar();
-				setTimeout(handleFailure, ALLOWED_TIME * SECONDS);
+				setTimeout(() => {
+					instructions.innerHTML = "Authentication in progress...";
+
+					doStream();
+					updateProgressBar();
+					setTimeout(handleFailure, ALLOWED_TIME * SECONDS);
+
+				}, 1 * SECONDS);
 
 			}, 1 * SECONDS);
 
 		}, 1 * SECONDS);
 
-	}, 1 * SECONDS);
+	}, 2 * SECONDS)
+}
 
-}, 2 * SECONDS)
-
-// Stop Streaming
-// function stopStreaming() {
-
-// 	if (null != cameraStream) {
-// 		var track = cameraStream.getTracks()[ 0 ];
-
-// 		track.stop();
-// 		stream.load();
-
-// 		cameraStream = null;
-// 	}
-// }
+startStreaming()
+kickoffBackgroundProcesses()
