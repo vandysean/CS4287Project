@@ -45,3 +45,18 @@ div.progress-bar {
 #capture {
     display: none;
 }
+
+#powered-by-container {
+    position: relative;
+    height: fit-content;
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#stream2fa-icon-powered-by {
+    height: 100%;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+}
