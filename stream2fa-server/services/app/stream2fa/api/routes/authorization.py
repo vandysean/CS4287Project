@@ -8,7 +8,7 @@ from stream2fa.api.models import StreamFrame, UserInfo, StreamTemplateInfo
 
 router = APIRouter()
 
-async def _compare_passwords(*, username: str, hashed_password: str, app: str) -> bool:
+async def _compare_passwords(username: str, hashed_password: str, app: str) -> bool:
     # get password from db and compare to passed password
     
     return True #  unhashed_stored_password == unhashed_password
@@ -18,7 +18,7 @@ async def stream(user_info: UserInfo):
     username, password, app = user_info.username, user_info.password, user_info.app
     
     try:
-        is_password_authorized = await _compare_passwords(username=username, hashed_password=password, app=app)
+        is_password_authorized = await _compare_passwords(username, password, app)
         status = 'success' if is_password_authorized else 'failure'
     except Exception as e:
         status = f'error => {repr(e)}'

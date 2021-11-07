@@ -17,6 +17,10 @@ class UserInfo(BaseModel):
     password: str
     app: str
     
+class DeleteUserInfo(BaseModel):
+    username: str
+    app: str
+    
 class StreamTemplateInfo(BaseModel):
     username: str
     app: str
