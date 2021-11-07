@@ -21,18 +21,15 @@ const PROGRESS_BAR_MAX_WIDTH = document.getElementById('progress-bar-container')
 var isAuthenticated = false;
 var timeoutOccurred = false;
 
-async function updateProgressBar() {
+async function updateProgressBar(timeElapsed) {
 	const maxTimeElapsed = ALLOWED_TIME * SECONDS;
-	const startTime = Date.now();
-
-	while (Date.now() - startTime <= maxTimeElapsed) {
-		let percentWidth = 100 * ((Date.now() - startTime) / maxTimeElapsed);
-		if (percentWidth > 100) {
-			percentWidth = 100;
-		}
-
-		progressBar.style.width = Math.round(percentWidth) + "%";
+	
+	let percentWidth = Math.round(100 * (timeElapsed / maxTimeElapsed))
+	if (percentWidth > 100) {
+		percentWidth = 100;
 	}
+
+	progressBar.style.width = Math.round(percentWidth) + "%";
 }
 
 async function handleSuccess() {
@@ -44,7 +41,7 @@ async function handleSuccess() {
 		setTimeout(() => {
 			const successLink = document.getElementById("success-url");
 			successLink.click()
-		}, 2 * SECONDS)
+		}, 1 * SECONDS)
 	}
 }
 
@@ -57,17 +54,17 @@ async function handleFailure() {
 		setTimeout(() => {
 			const failureLink = document.getElementById("failure-url");
 			failureLink.click()
-		}, 2 * SECONDS)
+		}, 1 * SECONDS)
 	}
 }
 
 async function sendFrameToServer() {
-	body = {
+	const body = {
 		uri: capture.toDataURL( "image/png" ),
 		username: USERNAME,
 		app: APP
 	};
-
+	console.log(body['uri']);
 	try {
 		const response = await fetch(URL, {
 			method: 'POST',
@@ -94,8 +91,17 @@ async function sendFrameToServer() {
 }
 
 async function kickoffStream() {
+	const startTime = Date.now();
+	const endTime = startTime + ALLOWED_TIME * SECONDS
+
 	for (let i = 1; cameraStream != null; ++i) {
+		if (Date.now() > endTime) {
+			await handleFailure()
+		}
+
 		if (i % RATE === 0) {
+			const uri = capture.toDataURL("image/png");
+			console.log('uri: ' + uri);
 			const responseStatus = await sendFrameToServer();
 
 			if (responseStatus === 'success') {
@@ -103,34 +109,10 @@ async function kickoffStream() {
 			} else if (responseStatus !== 'ongoing') {
 				console.log('ERROR: ' + responseStatus)
 			}
+
+			await updateProgressBar(Date.now() - startTime)
 		}
 	}
-}
-
-async function kickoffBackgroundProcesses() {
-	setTimeout(() => {
-		instructions.innerHTML = "Stream starting in 3";
-
-		setTimeout(() => {
-			instructions.innerHTML += ", 2";
-
-			setTimeout(() => {
-				instructions.innerHTML += ", 1...";
-
-				setTimeout(() => {
-					instructions.innerHTML = "Authentication in progress...";
-
-					kickoffStream();
-					updateProgressBar();
-					setTimeout(handleFailure, ALLOWED_TIME * SECONDS);
-
-				}, 1 * SECONDS);
-
-			}, 1 * SECONDS);
-
-		}, 1 * SECONDS);
-
-	}, 2 * SECONDS)
 }
 
 // Start Streaming
@@ -148,7 +130,8 @@ async function startStreaming() {
 
 			stream.play();
 
-			kickoffBackgroundProcesses()
+			instructions.innerHTML = "Authentication in progress...";
+			kickoffStream();
 		})
 		.catch(function(err) {
 
