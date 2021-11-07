@@ -9,14 +9,14 @@ const ALLOWED_TIME = 15;
 // stream elements
 var stream = document.getElementById("stream");
 var capture = document.getElementById("capture");
+var ctx = capture.getContext('2d');
 var cameraStream = null;
-capture.width = stream.width / 3;
-capture.height = stream.height / 3;
+capture.width = stream.width;
+capture.height = stream.height;
 
 // instructions and progress bar
 var instructions = document.getElementById('instructions');
-var progressBar = document.getElementById('progress-bar')
-const PROGRESS_BAR_MAX_WIDTH = document.getElementById('progress-bar-container').width;
+var progressBar = document.getElementById('progress-bar');
 
 var isAuthenticated = false;
 var timeoutOccurred = false;
@@ -101,19 +101,17 @@ async function kickoffStream() {
 		}
 
 		if (i % RATE === 0) {
-			const ctx = capture.getContext('2d');
-			ctx.drawImage(stream, 0, 0, capture.width, capture.height);
-			const uri = capture.toDataURL('image/png');
-			console.log(uri);
+			ctx.drawImage(stream, 0, 0, capture.width, capture.height);			const uri = capture.toDataURL('image/png');
+
 			const responseStatus = await sendFrameToServer(uri);
 
 			if (responseStatus === 'success') {
-				await handleSuccess()
+				await handleSuccess();
 			} else if (responseStatus !== 'ongoing') {
-				console.log('ERROR: ' + responseStatus)
+				console.log('ERROR: ' + responseStatus);
 			}
 
-			await updateProgressBar(Date.now() - startTime)
+			await updateProgressBar(Date.now() - startTime);
 		}
 	}
 }
@@ -148,4 +146,4 @@ async function startStreaming() {
 	}
 }
 
-startStreaming()
+startStreaming();
