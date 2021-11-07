@@ -7,8 +7,8 @@ const SECONDS = 1000;
 const ALLOWED_TIME = 15;
 
 // stream elements
-var stream = document.getElementById( "stream" );
-var capture = document.getElementById( "capture" );
+var stream = document.getElementById("stream");
+var capture = document.getElementById("capture");
 var cameraStream = null;
 capture.width = stream.width / 3;
 capture.height = stream.height / 3;
@@ -37,6 +37,7 @@ async function handleSuccess() {
 		isAuthenticated = true;
 		instructions.style.color = "#4bb543";
 		instructions.innerHTML = "Successfully authenticated " + USERNAME + "!";
+		progressBar.style.backgroundColor = "#4bb543";
 
 		setTimeout(() => {
 			const successLink = document.getElementById("success-url");
@@ -60,7 +61,7 @@ async function handleFailure() {
 
 async function sendFrameToServer() {
 	const body = {
-		uri: capture.toDataURL( "image/png" ),
+		uri: capture.toDataURL('image/png'),
 		username: USERNAME,
 		app: APP
 	};
@@ -100,8 +101,9 @@ async function kickoffStream() {
 		}
 
 		if (i % RATE === 0) {
-			const uri = capture.toDataURL("image/png");
-			console.log('uri: ' + uri);
+			const ctx = capture.getContext('2d');
+			ctx.drawImage(stream, 0, 0, capture.width, capture.height);
+
 			const responseStatus = await sendFrameToServer();
 
 			if (responseStatus === 'success') {
