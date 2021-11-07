@@ -132,7 +132,7 @@ async function kickoffStream() {
 
 			await updateProgressBar(numEncodingsSaved);
 
-			if (responseStatus === 'complete') {
+			if (responseStatus === 'complete' || numEncodingsSaved >= maxNumEncodingsSaved) {
 				await handleSuccess();
 			} else if (responseStatus === 'failed') {
 				await handleFailure();
