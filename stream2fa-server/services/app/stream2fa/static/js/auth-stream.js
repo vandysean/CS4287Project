@@ -5,6 +5,7 @@ const APP = document.getElementById("app").value;
 const RATE = 10;
 const SECONDS = 1000;
 const ALLOWED_TIME = 15;
+const NUM_SUCCESSFUL_NEEDED = 5;
 
 // stream elements
 var stream = document.getElementById("stream");
@@ -95,9 +96,10 @@ async function sendFrameToServer(uri) {
 
 async function kickoffStream() {
 	const startTime = Date.now();
-	const endTime = startTime + ALLOWED_TIME * SECONDS
+	const endTime = startTime + ALLOWED_TIME * SECONDS;
+	var numSuccess = 0;
 
-	for (let i = 1; cameraStream != null; ++i) {
+	for (let i = 1; !timeoutOccurred && cameraStream != null; ++i) {
 		if (Date.now() > endTime) {
 			await handleFailure()
 		}
@@ -107,9 +109,12 @@ async function kickoffStream() {
 			const uri = capture.toDataURL('image/png');
 
 			const responseStatus = await sendFrameToServer(uri);
-
+			
 			if (responseStatus === 'success') {
-				await handleSuccess();
+				++numSuccess;
+				if (numSuccess >= NUM_SUCCESSFUL_NEEDED) {
+					await handleSuccess();
+				}
 			} else if (responseStatus !== 'ongoing') {
 				console.log('ERROR: ' + responseStatus);
 			}
