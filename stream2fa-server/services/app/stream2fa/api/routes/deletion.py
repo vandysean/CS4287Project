@@ -1,5 +1,4 @@
-from fastapi import APIRouter, Request
-from fastapi.responses import HTMLResponse
+from fastapi import APIRouter
 
 from stream2fa.api.models import DeleteUserInfo
 
