@@ -3,7 +3,6 @@ version: "3"
 services:
   api:
     image: tuttlsj1/cs4287:stream2fa
-    container_name: stream2fa-server
     restart: always
     labels:
       - traefik.enable=true
