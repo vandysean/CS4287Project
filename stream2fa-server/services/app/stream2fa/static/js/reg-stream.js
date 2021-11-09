@@ -4,7 +4,7 @@ const USERNAME = document.getElementById("username").value;
 const APP = document.getElementById("app").value;
 const RATE = 10;
 const SECONDS = 1000;
-const ALLOWED_TIME = 15;
+const ALLOWED_TIME = 20;
 
 // stream elements
 var stream = document.getElementById("stream");
@@ -24,6 +24,10 @@ var maxNumEncodingsSaved = -1;
 var isRegistered = false;
 var registrationFailed = false;
 var timeoutOccurred = false;
+
+function streamIsOver() {
+	return isRegistered || registrationFailed || timeoutOccurred;
+}
 
 async function updateProgressBar(numEncodingsSaved) {	
 	let percentWidth = Math.round(100 * (numEncodingsSaved / maxNumEncodingsSaved))
@@ -113,7 +117,7 @@ async function kickoffStream() {
 	const startTime = Date.now();
 	const endTime = startTime + ALLOWED_TIME * SECONDS
 
-	for (let i = 1; cameraStream != null; ++i) {
+	for (let i = 1; !streamIsOver() && cameraStream != null; ++i) {
 		if (Date.now() > endTime) {
 			await handleTimeout()
 		}
@@ -158,7 +162,7 @@ async function startStreaming() {
 
 			stream.play();
 
-			instructions.innerHTML = "Registration in progress...";
+			instructions.innerHTML = "Registration in progress, remain close to camera...<br>Make sure only you are in frame";
 			kickoffStream();
 		})
 		.catch(function(err) {

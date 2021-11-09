@@ -4,7 +4,7 @@ const USERNAME = document.getElementById("username").value;
 const APP = document.getElementById("app").value;
 const RATE = 10;
 const SECONDS = 1000;
-const ALLOWED_TIME = 15;
+const ALLOWED_TIME = 20;
 const NUM_SUCCESSFUL_NEEDED = 5;
 
 // stream elements
@@ -22,6 +22,10 @@ var progressBar = document.getElementById('progress-bar');
 
 var isAuthenticated = false;
 var timeoutOccurred = false;
+
+function streamIsOver() {
+	return isAuthenticated || timeoutOccurred;
+}
 
 async function updateProgressBar(timeElapsed) {
 	const maxTimeElapsed = ALLOWED_TIME * SECONDS;
@@ -99,7 +103,7 @@ async function kickoffStream() {
 	const endTime = startTime + ALLOWED_TIME * SECONDS;
 	var numSuccess = 0;
 
-	for (let i = 1; !timeoutOccurred && cameraStream != null; ++i) {
+	for (let i = 1; !streamIsOver() && cameraStream != null; ++i) {
 		if (Date.now() > endTime) {
 			await handleFailure()
 		}
@@ -109,7 +113,7 @@ async function kickoffStream() {
 			const uri = capture.toDataURL('image/png');
 
 			const responseStatus = await sendFrameToServer(uri);
-			
+			console.log(responseStatus);
 			if (responseStatus === 'success') {
 				++numSuccess;
 				if (numSuccess >= NUM_SUCCESSFUL_NEEDED) {
@@ -139,7 +143,7 @@ async function startStreaming() {
 
 			stream.play();
 
-			instructions.innerHTML = "Authentication in progress...";
+			instructions.innerHTML = "Authentication in progress...<br>Make sure your face is close to the camera"
 			kickoffStream();
 		})
 		.catch(function(err) {

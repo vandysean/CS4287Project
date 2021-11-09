@@ -5,6 +5,8 @@ from stream2fa.common.functions import decode_base64_image
 from stream2fa.common.objects import templates
 from stream2fa.api.models import StreamFrame, UserInfo, StreamTemplateInfo
 
+import face_recognition as fr
+import os
 
 router = APIRouter()
 
@@ -30,7 +32,15 @@ async def stream(user_info: UserInfo):
 async def stream(stream_frame: StreamFrame):
     try:
         img = await decode_base64_image(stream_frame.uri)
-        status = 'ongoing' # ongoing / success
+        face_locations = fr.face_locations(img)
+        face_encodings = fr.face_encodings(img, face_locations)
+
+        known_img = fr.load_image_file(os.path.join(os.getcwd(), "test.jpg"))
+        known_encoding = fr.face_encodings(known_img)[0]
+        # status = 'ongoing' # ongoing / success
+
+        matches = fr.compare_faces(face_encodings, known_encoding)
+        status = 'success' if True in matches else 'ongoing'
     except Exception as e:
         status = f'error => {repr(e)}'
     
