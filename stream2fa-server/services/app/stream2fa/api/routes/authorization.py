@@ -16,7 +16,7 @@ async def _compare_passwords(username: str, hashed_password: str, app: str) -> b
     return True #  unhashed_stored_password == unhashed_password
 
 @router.post("/user/pwd")
-async def stream(user_info: UserInfo):
+async def password_authorization(user_info: UserInfo):
     username, password, app = user_info.username, user_info.password, user_info.app
     
     try:
@@ -29,7 +29,7 @@ async def stream(user_info: UserInfo):
     
 
 @router.post("/user/stream")
-async def stream(stream_frame: StreamFrame):
+async def stream_authorization(stream_frame: StreamFrame):
     try:
         img = await decode_base64_image(stream_frame.uri)
         face_locations = fr.face_locations(img)
@@ -50,7 +50,7 @@ async def stream(stream_frame: StreamFrame):
 
 
 @router.post("/user/stream/template", response_class=HTMLResponse)
-async def stream_template(request: Request, stream_template_info: StreamTemplateInfo):
+async def authorization_stream_template(request: Request, stream_template_info: StreamTemplateInfo):
     template_data = {
         'request': request,
         'username': stream_template_info.username,

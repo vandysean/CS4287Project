@@ -6,7 +6,7 @@ from stream2fa.api.models import DeleteUserInfo
 router = APIRouter()
 
 @router.delete('/user')
-async def stream(delete_user_info: DeleteUserInfo):
+async def delete_user(delete_user_info: DeleteUserInfo):
     username, app = delete_user_info.username, delete_user_info.app
     
     try:

@@ -9,9 +9,6 @@ class StreamFrame(BaseModel):
     username: str
     app: str
     
-class AppInfo(BaseModel):
-    app: str
-    
 class UserInfo(BaseModel):
     username: str
     password: str

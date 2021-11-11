@@ -7,7 +7,7 @@ from stream2fa.api.models import RedirectTemplateInfo
 router = APIRouter()
 
 @router.post("/", response_class=HTMLResponse)
-async def stream_template(request: Request, redirect_template_info: RedirectTemplateInfo):
+async def immediate_redirect(request: Request, redirect_template_info: RedirectTemplateInfo):
     template_data = {
         'request': request,
         'url': redirect_template_info.url

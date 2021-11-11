@@ -6,7 +6,7 @@ import os
 router = APIRouter()
 
 @router.get('/{file_name}', response_class=FileResponse)
-def download(file_name: str):
+def download_file(file_name: str):
     file_type = file_name.split('.')[1]
     
     if file_type == 'js' or file_type == 'css':

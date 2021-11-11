@@ -9,7 +9,7 @@ from stream2fa.api.models import StreamFrame, AppInfo, UserInfo, StreamTemplateI
 router = APIRouter()
 
 @router.post("/user/pwd")
-async def stream(user_info: UserInfo):
+async def password_registration(user_info: UserInfo):
     username, password, app = user_info.username, user_info.password, user_info.app
     
     ## Check if username is available, if so create new user in db ##
@@ -21,7 +21,7 @@ async def stream(user_info: UserInfo):
     return {'status': status}
 
 @router.post("/user/stream")
-async def stream(stream_frame: StreamFrame):
+async def stream_registration(stream_frame: StreamFrame):
     try:
         img = await decode_base64_image(stream_frame.uri)
         status = 'ongoing'  # ongoing / complete / failed
@@ -36,7 +36,7 @@ async def stream(stream_frame: StreamFrame):
             'max_encodings_saved': MAX_NUM_ENCODINGS_SAVED}
 
 @router.post("/user/stream/template", response_class=HTMLResponse)
-async def stream_template(request: Request, stream_template_info: StreamTemplateInfo):
+async def registration_stream_template(request: Request, stream_template_info: StreamTemplateInfo):
     template_data = {
         'request': request,
         'username': stream_template_info.username,

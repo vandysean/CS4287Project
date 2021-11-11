@@ -6,7 +6,7 @@ from stream2fa.api.models import TestMessage, StreamFrame
 router = APIRouter()
 
 @router.post("/stream")
-async def stream(stream_frame: StreamFrame):
+async def test_stream(stream_frame: StreamFrame):
     try:
         img = await decode_base64_image(stream_frame.uri)
     except Exception as e:
@@ -17,12 +17,12 @@ async def stream(stream_frame: StreamFrame):
 
 
 @router.get("/get")
-def hello():
+def test_get():
     return {"message": "Hello FastAPI + SSL"}
 
 
 @router.post("/post")
-def send_message(message: TestMessage):
+def test_post(message: TestMessage):
     text = message.text
     author = message.author
     response = {"status": "message received", "text": text, "author": author}
