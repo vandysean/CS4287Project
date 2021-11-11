@@ -4,7 +4,7 @@ from fastapi.responses import HTMLResponse
 from stream2fa.common.constants import MAX_NUM_ENCODINGS_SAVED
 from stream2fa.common.functions import decode_base64_image
 from stream2fa.common.objects import templates
-from stream2fa.api.models import StreamFrame, AppInfo, UserInfo, StreamTemplateInfo
+from stream2fa.api.models import StreamFrame, UserInfo, StreamTemplateInfo
 
 router = APIRouter()
 
