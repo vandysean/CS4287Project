@@ -5,16 +5,22 @@ from stream2fa.common.constants import MAX_NUM_ENCODINGS_SAVED
 from stream2fa.common.functions import decode_base64_image
 from stream2fa.common.objects import templates
 from stream2fa.api.models import StreamFrame, UserInfo, StreamTemplateInfo
+from stream2fa.users.models import User
 
 router = APIRouter()
 
 @router.post("/user/pwd")
-async def password_registration(user_info: UserInfo):
-    username, password, app = user_info.username, user_info.password, user_info.app
+async def password_registration(user_info: UserInfo):    
+    user = User()
     
-    ## Check if username is available, if so create new user in db ##
     try:
-        status = 'success'  # success / failure
+        res = await user.signup(user_info.username, user_info.password)
+        if res['message'] == 'success':
+            status = 'success'  # success / failure
+        else:
+            status = 'failure'
+        
+        print(res['message'])
     except Exception as e:
         status = f'error => {repr(e)}'
     
@@ -22,15 +28,21 @@ async def password_registration(user_info: UserInfo):
 
 @router.post("/user/stream")
 async def stream_registration(stream_frame: StreamFrame):
+    user = await User(stream_frame.username)
+    
     try:
         img = await decode_base64_image(stream_frame.uri)
-        status = 'ongoing'  # ongoing / complete / failed
+        
+        res = await user.update_face_encodings(img)
+        
+        status = res['message']
+        num_encodings_saved = res['num_saved']
+        
+        print(res)
+        
     except Exception as e:
         status = f'error => {repr(e)}'
-    
-    ## Do thing with the image here ##
-    num_encodings_saved = MAX_NUM_ENCODINGS_SAVED - 1 # get this number from above logic somehow
-    
+        
     return {'status': status,
             'encodings_saved': num_encodings_saved,
             'max_encodings_saved': MAX_NUM_ENCODINGS_SAVED}

@@ -1,3 +1,5 @@
 wheel
 fastapi[all]
 opencv-python-headless
+pymongo
+passlib
