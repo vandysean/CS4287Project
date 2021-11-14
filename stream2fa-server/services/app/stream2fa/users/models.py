@@ -69,7 +69,7 @@ class User:
         if self.user:
             face_locations = face_recognition.face_locations(img)
             if len(face_locations) != 1:
-                return {"message": "ongoing", "code": 200}
+                return {"message": "ongoing", "num_saved": len(self.user['encodings'].split(';')), "code": 200}
             
             encoding = face_recognition.face_encodings(img, face_locations)[0]
             

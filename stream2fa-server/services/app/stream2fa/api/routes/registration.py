@@ -29,18 +29,19 @@ async def password_registration(user_info: UserInfo):
 @router.post("/user/stream")
 async def stream_registration(stream_frame: StreamFrame):
     user = User(stream_frame.username)
-    
+
+    num_encodings_saved = 0    
     try:
         img = await decode_base64_image(stream_frame.uri)
         
         res = await user.update_face_encodings(img)
-        
+        print(res)        
         status = res['message']
         num_encodings_saved = res['num_saved']
         
-        print(res)
         
     except Exception as e:
+        print("Error:", repr(e))
         status = f'error => {repr(e)}'
         
     return {'status': status,
