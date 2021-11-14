@@ -10,7 +10,7 @@ import uuid
 class User:
     user = None
     
-    async def __init__(self, username=None):
+    def __init__(self, username=None):
         if username:
             self.user = db.users.find_one({
                 "username": username

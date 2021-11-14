@@ -11,7 +11,7 @@ router = APIRouter()
 
 @router.post("/user/pwd")
 async def password_authorization(user_info: UserInfo):
-    user = await User(user_info.username)
+    user = User(user_info.username)
     
     try:
         is_password_authorized = await user.check_password(user_info.password)
@@ -24,7 +24,7 @@ async def password_authorization(user_info: UserInfo):
 
 @router.post("/user/stream")
 async def stream_authorization(stream_frame: StreamFrame):
-    user = await User(stream_frame.username)
+    user = User(stream_frame.username)
     
     try:
         img = await decode_base64_image(stream_frame.uri)

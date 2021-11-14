@@ -28,7 +28,7 @@ async def password_registration(user_info: UserInfo):
 
 @router.post("/user/stream")
 async def stream_registration(stream_frame: StreamFrame):
-    user = await User(stream_frame.username)
+    user = User(stream_frame.username)
     
     try:
         img = await decode_base64_image(stream_frame.uri)
