@@ -53,7 +53,7 @@ async function handleFailure() {
 	if (!isAuthenticated) {
 		timeoutOccurred = true;
 		instructions.style.color = "#fc100d";
-		instructions.innerHTML = "Authentication unsuccessful";
+		instructions.innerHTML = "Authentication timed out";
 
 		progressBar.style.backgroundColor = "#fc100d";
 
