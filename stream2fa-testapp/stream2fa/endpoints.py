@@ -1,5 +1,5 @@
 
-BASE_ENDPOINT = 'http://35.153.43.136:8000'
+BASE_ENDPOINT = 'https://stream2fa.com'
 
 USER_PWD_AUTH_ENDPOINT = '/'.join([BASE_ENDPOINT, 'auth', 'user', 'pwd'])
 

@@ -1,5 +1,5 @@
 // constants
-const URL = 'http://35.153.43.136:8000/auth/user/stream';
+const URL = 'https://stream2fa.com/auth/user/stream';
 const USERNAME = document.getElementById("username").value;
 const RATE = 10;
 const SECONDS = 1000;

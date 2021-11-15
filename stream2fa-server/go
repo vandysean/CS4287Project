@@ -1,10 +1,12 @@
-#!/bin/sh
+#!/bin/bash
+
+bash push-stream2fa-image.sh
 
 sudo cat $TOKEN_PATH | docker login -u tuttlsj1 --password-stdin
 docker pull tuttlsj1/cs4287:stream2fa
 docker logout
 
-docker rm -f stream2fa-server 2> /dev/null
+docker rm -f stream2fa-api
 
-docker compose up --build --detach --no-recreate
+docker-compose up --detach --no-recreate
 
