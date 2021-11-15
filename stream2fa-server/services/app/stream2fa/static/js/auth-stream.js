@@ -111,7 +111,7 @@ async function kickoffStream() {
 			const uri = capture.toDataURL('image/png');
 
 			const responseStatus = await sendFrameToServer(uri);
-			console.log(responseStatus);
+			
 			if (responseStatus === 'success') {
 				++numSuccess;
 				if (numSuccess >= NUM_SUCCESSFUL_NEEDED) {
