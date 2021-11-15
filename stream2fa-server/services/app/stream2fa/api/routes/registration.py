@@ -15,13 +15,10 @@ async def password_registration(user_info: UserInfo):
     
     try:
         res = await user.create_user(user_info.username, user_info.password)
-        if res['message'] == 'success':
-            status = 'success'  # success / failure
-        else:
-            status = 'failure'
         
-        print(res['message'])
+        status = 'success' if res['message'] == 'success' else 'failure'
     except Exception as e:
+        print("Error:", repr(e))
         status = f'error => {repr(e)}'
     
     return {'status': status}
@@ -35,11 +32,10 @@ async def stream_registration(stream_frame: StreamFrame):
         img = await decode_base64_image(stream_frame.uri)
         
         res = await user.update_face_encodings(img)
-        print(res)        
+        
         status = res['message']
         num_encodings_saved = res['num_saved']
-        
-        
+                
     except Exception as e:
         print("Error:", repr(e))
         status = f'error => {repr(e)}'

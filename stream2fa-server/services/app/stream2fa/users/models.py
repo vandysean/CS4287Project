@@ -1,9 +1,9 @@
-from passlib.hash import pbkdf2_sha256
 from stream2fa.common.objects import db
 from stream2fa.common.constants import MAX_NUM_ENCODINGS_SAVED
 
 import face_recognition
 import numpy as np
+from passlib.hash import pbkdf2_sha256
 import uuid
 from io import BytesIO
 
@@ -55,7 +55,7 @@ class User:
                 if True in face_recognition.compare_faces(unknown_encodings, known_encoding_arr):
                     status = 'success'
                     break
-
+            
             return status
         
         return 'failure'
@@ -83,4 +83,10 @@ class User:
             
             return {"message": status, "num_saved": num_encodings_saved, "code": 200}
             
-        return {"message": "failure", "num_saved": len(self.user['encodings']), "code": 400}    
+        return {"message": "failure", "num_saved": len(self.user['encodings']), "code": 400}
+
+    async def delete(self):
+        # Do db deletion here
+        self.user = None
+        return {"message": "success"}
+

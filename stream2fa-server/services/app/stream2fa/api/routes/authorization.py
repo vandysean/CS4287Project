@@ -17,6 +17,7 @@ async def password_authorization(user_info: UserInfo):
         is_password_authorized = await user.check_password(user_info.password)
         status = 'success' if is_password_authorized else 'failure'
     except Exception as e:
+        print("Error:", repr(e))
         status = f'error => {repr(e)}'
     
     return {'status': status}
@@ -25,12 +26,13 @@ async def password_authorization(user_info: UserInfo):
 @router.post("/user/stream")
 async def stream_authorization(stream_frame: StreamFrame):
     user = User(stream_frame.username)
-    
+  
     try:
         img = await decode_base64_image(stream_frame.uri)
-
-        status = user.check_face_encodings(img)
+        
+        status = await user.check_face_encodings(img)
     except Exception as e:
+        print("Error:", repr(e))
         status = f'error => {repr(e)}'
         
     return {'status': status}
@@ -48,3 +50,4 @@ async def authorization_stream_template(request: Request, stream_template_info: 
     }
     
     return templates.TemplateResponse('stream_template.html', template_data)
+
