@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card-wrapper">
+  <div class="card">
+
+    <h1 class="center">Create an Account</h1>
+
+    <form name="signup_form">
+
+      <label for="username">Username</label>
+      <input id="username-input" type="text" name="username" class="field" required>
+
+      <label for="password">Password</label>
+      <input id="password-input" type="password" name="password" class="field" required>
+
+      <p id="error-text" class="error error--hidden" style="padding-bottom: 8px;"></p>
+    </form>
+
+    <button id="submit-btn" type="submit" class="btn field">Create Account</button>
+  </div>
+</div>
+
+<script src="/static/js/signup.js"></script>
+{% endblock %}
