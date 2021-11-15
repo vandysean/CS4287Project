@@ -6,10 +6,12 @@ from stream2fa.endpoints import (
 
 import requests
 import json
+import hashlib
 
 
 def register_user(*, username: str, password: str, app: str, success_url: str, failure_url: str) -> str:
-    hashed_password = password  # do whatever hashing/encryption here
+    hash_function = hashlib.new('sha512_256').update(password.encode('utf-8'))
+    hashed_password = hash_function.hexdigest()
     
     pwd_reg_data = {'username': username, 'password': hashed_password, 'app': app}
     pwd_reg_response = requests.post(USER_PWD_REG_ENDPOINT, data=json.dumps(pwd_reg_data)).json()
