@@ -86,7 +86,6 @@ class User:
         return {"message": "failure", "num_saved": len(self.user['encodings']), "code": 400}
 
     async def delete(self):
-        # Do db deletion here
-        self.user = None
-        return {"message": "success"}
-
+        if self.user:
+            db.users.delete_one({'username': self.user['username']})
+            self.user = None

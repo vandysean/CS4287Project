@@ -9,12 +9,7 @@ router = APIRouter()
 async def delete_user(delete_user_info: DeleteUserInfo):
     user = User(delete_user_info.username)
 
-    try:
-        res = await user.delete()
-
-        status = res['message']
-    except Exception as e:
-        status = f'error => {repr(e)}'
+    await user.delete()
     
-    return {'status': status}
+    return {'status': 'deleted'}
 
