@@ -26,10 +26,8 @@ function streamIsOver() {
 	return isAuthenticated || timeoutOccurred;
 }
 
-async function updateProgressBar(timeElapsed) {
-	const maxTimeElapsed = ALLOWED_TIME * SECONDS;
-	
-	let percentWidth = Math.round(100 * (timeElapsed / maxTimeElapsed))
+async function updateProgressBar(numSuccess) {	
+	let percentWidth = Math.round(100 * (numSuccess / NUM_SUCCESSFUL_NEEDED))
 	if (percentWidth > 100) {
 		percentWidth = 100;
 	}
@@ -114,14 +112,14 @@ async function kickoffStream() {
 			
 			if (responseStatus === 'success') {
 				++numSuccess;
+				await updateProgressBar(numSuccess);
+
 				if (numSuccess >= NUM_SUCCESSFUL_NEEDED) {
 					await handleSuccess();
 				}
 			} else if (responseStatus !== 'ongoing') {
 				console.log('ERROR: ' + responseStatus);
 			}
-
-			await updateProgressBar(Date.now() - startTime);
 		}
 	}
 }
