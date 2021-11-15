@@ -11,11 +11,14 @@ from stream2fa.endpoints import (
 )
 
 
+def _hash_password(password: str) -> str:
+    hash_function = hashlib.new('sha512_256')
+    hash_function.update(password.encode('utf-8'))
+    return hash_function.hexdigest()
+
+
 def register_user(*, username: str, password: str, success_url: str, failure_url: str) -> str:
-    hash_function = hashlib.new('sha512_256').update(password.encode('utf-8'))
-    hashed_password = hash_function.hexdigest()
-    
-    pwd_reg_data = {'username': username, 'password': hashed_password}
+    pwd_reg_data = {'username': username, 'password': _hash_password(password)}
     pwd_reg_response = requests.post(USER_PWD_REG_ENDPOINT, data=json.dumps(pwd_reg_data)).json()
         
     if pwd_reg_response['status'] == 'success':
@@ -30,11 +33,8 @@ def register_user(*, username: str, password: str, success_url: str, failure_url
         return redirect_response.text
     
     
-def authorize_user(*, username: str, password: str, success_url: str, failure_url: str) -> str:
-    hash_function = hashlib.new('sha512_256').update(password.encode('utf-8'))
-    hashed_password = hash_function.hexdigest()
-        
-    pwd_auth_data = {'username': username, 'password': hashed_password}
+def authorize_user(*, username: str, password: str, success_url: str, failure_url: str) -> str:       
+    pwd_auth_data = {'username': username, 'password':  _hash_password(password)}
     pwd_auth_response = requests.post(USER_PWD_AUTH_ENDPOINT, data=json.dumps(pwd_auth_data)).json()
         
     if pwd_auth_response['status'] == 'success':
