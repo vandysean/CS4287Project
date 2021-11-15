@@ -14,7 +14,7 @@ async def password_registration(user_info: UserInfo):
     user = User()
     
     try:
-        res = await user.signup(user_info.username, user_info.password)
+        res = await user.create_user(user_info.username, user_info.password)
         if res['message'] == 'success':
             status = 'success'  # success / failure
         else:
