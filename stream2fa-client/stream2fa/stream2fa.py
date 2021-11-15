@@ -51,4 +51,5 @@ def authorize_user(*, username: str, password: str, success_url: str, failure_ur
     
 def delete_user(*, username: str) -> None:
     user_delete_data = {'username': username}
-    requests.delete(DELETE_USER_ENDPOINT, data=json.dumps(user_delete_data)).json()
+    requests.delete(DELETE_USER_ENDPOINT, data=json.dumps(user_delete_data))
+
