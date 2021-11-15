@@ -5,7 +5,7 @@ const APP = document.getElementById("app").value;
 const RATE = 10;
 const SECONDS = 1000;
 const ALLOWED_TIME = 20;
-const NUM_SUCCESSFUL_NEEDED = 5;
+const NUM_SUCCESSFUL_NEEDED = 15;
 
 // stream elements
 var stream = document.getElementById("stream");
