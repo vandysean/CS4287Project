@@ -5,9 +5,10 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>stream2fa - Immediate Redirect</title>
+    <link rel="icon" href="http://35.153.43.136:8000/download/stream2fa-icon.png" type="image/x-icon">
 </head>
 <body>
-    <p>Redirecting to: <a id="redirect-url" href="{{url}}">{{url}}</a></p>
+    <a id="redirect-url" href="{{url}}" style="display: none;"></a>
     <script>
         const a = document.getElementById("redirect-url");
         a.click()
