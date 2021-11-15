@@ -49,7 +49,6 @@ async def registration_stream_template(request: Request, stream_template_info: S
     template_data = {
         'request': request,
         'username': stream_template_info.username,
-        'app': stream_template_info.app,
         'success_url': stream_template_info.success_url,
         'failure_url': stream_template_info.failure_url,
         'js_file': 'reg-stream.js'

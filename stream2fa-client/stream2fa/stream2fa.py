@@ -11,15 +11,15 @@ from stream2fa.endpoints import (
 )
 
 
-def register_user(*, username: str, password: str, app: str, success_url: str, failure_url: str) -> str:
+def register_user(*, username: str, password: str, success_url: str, failure_url: str) -> str:
     hash_function = hashlib.new('sha512_256').update(password.encode('utf-8'))
     hashed_password = hash_function.hexdigest()
     
-    pwd_reg_data = {'username': username, 'password': hashed_password, 'app': app}
+    pwd_reg_data = {'username': username, 'password': hashed_password}
     pwd_reg_response = requests.post(USER_PWD_REG_ENDPOINT, data=json.dumps(pwd_reg_data)).json()
         
     if pwd_reg_response['status'] == 'success':
-        stream_reg_data = {'username': username, 'app': app, 'success_url': success_url, 'failure_url': failure_url}
+        stream_reg_data = {'username': username, 'success_url': success_url, 'failure_url': failure_url}
         stream_reg_response = requests.post(GET_REG_STREAM_TEMPLATE_ENDPOINT, data=json.dumps(stream_reg_data))
         
         return stream_reg_response.text
@@ -30,15 +30,15 @@ def register_user(*, username: str, password: str, app: str, success_url: str, f
         return redirect_response.text
     
     
-def authorize_user(*, username: str, password: str, app: str, success_url: str, failure_url: str) -> str:
+def authorize_user(*, username: str, password: str, success_url: str, failure_url: str) -> str:
     hash_function = hashlib.new('sha512_256').update(password.encode('utf-8'))
     hashed_password = hash_function.hexdigest()
         
-    pwd_auth_data = {'username': username, 'password': hashed_password, 'app': app}
+    pwd_auth_data = {'username': username, 'password': hashed_password}
     pwd_auth_response = requests.post(USER_PWD_AUTH_ENDPOINT, data=json.dumps(pwd_auth_data)).json()
         
     if pwd_auth_response['status'] == 'success':
-        stream_auth_data = {'username': username, 'app': app, 'success_url': success_url, 'failure_url': failure_url}
+        stream_auth_data = {'username': username, 'success_url': success_url, 'failure_url': failure_url}
         stream_auth_response = requests.post(GET_AUTH_STREAM_TEMPLATE_ENDPOINT, data=json.dumps(stream_auth_data))
         
         return stream_auth_response.text

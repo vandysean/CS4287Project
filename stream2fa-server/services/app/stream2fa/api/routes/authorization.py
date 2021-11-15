@@ -43,7 +43,6 @@ async def authorization_stream_template(request: Request, stream_template_info: 
     template_data = {
         'request': request,
         'username': stream_template_info.username,
-        'app': stream_template_info.app,
         'success_url': stream_template_info.success_url,
         'failure_url': stream_template_info.failure_url,
         'js_file': 'auth-stream.js'

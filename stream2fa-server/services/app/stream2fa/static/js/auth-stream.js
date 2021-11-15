@@ -1,7 +1,6 @@
 // constants
 const URL = 'http://35.153.43.136:8000/auth/user/stream';
 const USERNAME = document.getElementById("username").value;
-const APP = document.getElementById("app").value;
 const RATE = 10;
 const SECONDS = 1000;
 const ALLOWED_TIME = 20;
@@ -70,8 +69,7 @@ async function handleFailure() {
 async function sendFrameToServer(uri) {
 	const body = {
 		uri: uri,
-		username: USERNAME,
-		app: APP
+		username: USERNAME
 	};
 
 	try {
