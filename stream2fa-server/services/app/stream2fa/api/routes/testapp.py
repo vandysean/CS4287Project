@@ -3,7 +3,7 @@ from fastapi.security import APIKeyCookie
 from starlette.responses import RedirectResponse, Response, HTMLResponse
 from jose import jwt
 
-from stream2fa import client as stream2fa
+from stream2fa.client import stream2fa
 from stream2fa.common.objects import templates
 from stream2fa.common.constants import HOST_NAME
 from stream2fa.common.constants import SECRET_KEY
