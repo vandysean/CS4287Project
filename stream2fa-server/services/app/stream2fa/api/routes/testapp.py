@@ -2,7 +2,6 @@ from fastapi import APIRouter, Form, Request, Depends
 from fastapi.security import APIKeyCookie
 from starlette.responses import RedirectResponse, Response, HTMLResponse
 from jose import jwt
-import os
 
 from stream2fa import client as stream2fa
 from stream2fa.common.objects import templates
