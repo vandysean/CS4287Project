@@ -20,7 +20,7 @@ async def home(request: Request):
 
 @router.get("/signup", response_class=HTMLResponse)
 async def signup(request: Request):
-    return templates.TemplateResponse("fastapi-signup.html", {"request": request})
+    return templates.TemplateResponse("signup.html", {"request": request})
 
 
 @router.post("/signup", response_class=HTMLResponse)
@@ -37,7 +37,7 @@ async def login(request: Request, session: str = Depends(cookie_sec)):
     if session:
         return RedirectResponse(router.url_path_for("dashboard"))
     else:
-        return templates.TemplateResponse("fastapi-login.html", {"request": request})        
+        return templates.TemplateResponse("login.html", {"request": request})        
 
 
 @router.post("/login", response_class=HTMLResponse)
@@ -71,7 +71,7 @@ async def dashboard(request: Request, session: str = Depends(cookie_sec)):
             "username": jwt.decode(session, SECRET_KEY)["username"]
         }
         
-        return templates.TemplateResponse("fastapi-dashboard.html", template_parameters)
+        return templates.TemplateResponse("dashboard.html", template_parameters)
     else:
         return RedirectResponse(router.url_path_for("home"))
         
