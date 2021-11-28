@@ -3,4 +3,3 @@ fastapi[all]
 opencv-python-headless
 pymongo
 passlib
-python-jose[cryptography]
