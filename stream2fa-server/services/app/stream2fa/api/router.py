@@ -18,4 +18,4 @@ router.include_router(registration.router, tags=["register"], prefix="/register"
 router.include_router(downloads.router, tags=["download"], prefix="/download")
 router.include_router(redirect.router, tags=["redirect"], prefix="/redirect")
 router.include_router(deletion.router, tags=["delete"], prefix="/delete")
-router.include_router(testapp.router, tags=["testapp"], prefix="/testapp")
+router.include_router(deletion.router, tags=["testapp"], prefix="/testapp")

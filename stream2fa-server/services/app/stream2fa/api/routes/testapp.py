@@ -2,8 +2,9 @@ from fastapi import APIRouter, Form, Request, Depends
 from fastapi.security import APIKeyCookie
 from starlette.responses import RedirectResponse, Response, HTMLResponse
 from jose import jwt
+import os
 
-from stream2fa.client import stream2fa
+from stream2fa import client as stream2fa
 from stream2fa.common.objects import templates
 from stream2fa.common.constants import HOST_NAME
 from stream2fa.common.constants import SECRET_KEY
@@ -20,7 +21,7 @@ async def home(request: Request):
 
 @router.get("/signup", response_class=HTMLResponse)
 async def signup(request: Request):
-    return templates.TemplateResponse("signup.html", {"request": request})
+    return templates.TemplateResponse("fastapi-signup.html", {"request": request})
 
 
 @router.post("/signup", response_class=HTMLResponse)
@@ -37,7 +38,7 @@ async def login(request: Request, session: str = Depends(cookie_sec)):
     if session:
         return RedirectResponse(router.url_path_for("dashboard"))
     else:
-        return templates.TemplateResponse("login.html", {"request": request})        
+        return templates.TemplateResponse("fastapi-login.html", {"request": request})        
 
 
 @router.post("/login", response_class=HTMLResponse)
@@ -71,7 +72,7 @@ async def dashboard(request: Request, session: str = Depends(cookie_sec)):
             "username": jwt.decode(session, SECRET_KEY)["username"]
         }
         
-        return templates.TemplateResponse("dashboard.html", template_parameters)
+        return templates.TemplateResponse("fastapi-dashboard.html", template_parameters)
     else:
         return RedirectResponse(router.url_path_for("home"))
         
