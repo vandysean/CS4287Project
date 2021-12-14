@@ -1,7 +1,8 @@
-import secrets
+import os
 
 MAX_NUM_ENCODINGS_SAVED = 15
 
-DB_URI = "mongodb+srv://admin:IpjsuXtcjy0Bmz6G@cluster0.6m2dg.mongodb.net/Cluster0?retryWrites=true&w=majority"
+with open(os.path.join(os.getcwd(), "db-uri.txt"), "r") as f:
+    DB_URI = f.read().strip()
 
 HOST_NAME = "stream2fa.com"
